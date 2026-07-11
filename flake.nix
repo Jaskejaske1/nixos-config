@@ -3,7 +3,7 @@
 
   inputs = {
     # Point to the official unstable or stable NixOS packages channel
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {

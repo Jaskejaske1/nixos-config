@@ -6,7 +6,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Networking
-  networking.hostName = "nixos";
+  networking.hostName = "tacos"; # My NixOS testing machine
   networking.networkmanager.enable = true;
   
   # Localization & Time

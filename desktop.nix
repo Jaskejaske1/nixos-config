@@ -44,5 +44,6 @@
     nixd
     chromium
     vscode
+    zed-editor
   ];
 }

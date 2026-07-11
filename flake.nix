@@ -11,6 +11,7 @@
       # This name MUST match your networking.hostName (tacos)
       tacos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+	specialArgs = { inherit self; };
         modules = [
           ./configuration.nix
         ];

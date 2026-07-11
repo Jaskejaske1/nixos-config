@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, self, ... }: # <-- Added 'self' here
 
 {
   imports = [
@@ -7,6 +7,8 @@
     ./desktop.nix
   ];
 
-  # System state version tracker. Do not alter this value.
+  # Explicitly tell NixOS to read the Git commit hash from the Flake
+  system.configurationRevision = if (self ? rev) then self.rev else throw "Commit your changes first!";
+
   system.stateVersion = "26.05";
 }

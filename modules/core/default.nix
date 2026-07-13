@@ -136,6 +136,16 @@
     auto-optimise-store = true;
   };
 
+  programs.bash = {
+    interactiveShellInit = ''
+      # Initialize zoxide shell hook
+      eval "$(${pkgs.zoxide}/bin/zoxide init bash)"
+
+      # Set up custom AZERTY aliases
+      alias ewa="eza -lah --git"
+    '';
+  };
+
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc.lib

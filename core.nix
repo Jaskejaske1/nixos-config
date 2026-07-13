@@ -42,6 +42,9 @@
   # Enable nix-ld to run generic unpatched dynamic binaries automatically
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-    # Add any basic missing libraries here if complex binaries need them later
+    stdenv.cc.cc.lib
+    zlib
+    glibc
+    openssl
   ];
 }

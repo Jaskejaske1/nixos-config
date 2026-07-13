@@ -30,6 +30,46 @@
     interval = "weekly";
   };
 
+  # =========================================================================
+  # Automated System Maintenance & Profile Cleanup Layer
+  # =========================================================================
+
+  # 1. Register a system-wide maintenance command: 'cleanup-tacos'
+  environment.systemPackages = [
+    (pkgs.writeShellScriptBin "cleanup-tacos" ''
+      set -e
+      echo "=== Kicking off System Maintenance Profile Purge ==="
+
+      # Clear system generations older than 1 day safely
+      echo "-> Purging legacy system profiles..."
+      sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +1
+
+      # Collect unreferenced store items
+      echo "-> Collecting garbage to free disk blocks..."
+      sudo nix-store --gc
+
+      echo "=== System footprint optimization complete ==="
+    '')
+  ];
+
+  # 2. Automated background systemd maintenance timer (Runs weekly on Monday at 4 AM)
+  systemd.services.tacos-maintenance = {
+    description = "Automated NixOS Storage Maintenance Engine";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/cleanup-tacos";
+    };
+  };
+
+  systemd.timers.tacos-maintenance = {
+    description = "Timer for Automated NixOS Storage Maintenance Engine";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "Mon *-*-* 04:00:00";
+      Persistent = true;
+    };
+  };
+
   # Nix Package Manager Settings
   nix.settings = {
     experimental-features = [

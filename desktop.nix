@@ -52,7 +52,7 @@
     nixd
     vscode
     zed-editor
-
+    ripgrep
     # pre-compiled Codex Rust binary
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];

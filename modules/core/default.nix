@@ -126,6 +126,14 @@
     interval = "weekly";
   };
 
+  services.syncthing = {
+    enable = true;
+    user = "jaske";
+    dataDir = "/home/jaske/.local/share/syncthing";
+    configDir = "/home/jaske/.config/syncthing";
+    openDefaultPorts = true;
+  };
+
   services.logind.settings.Login.HandleLidSwitch = "suspend";
   services.logind.settings.Login.HandleLidSwitchExternalPower = "suspend";
 

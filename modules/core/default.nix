@@ -126,7 +126,7 @@
     interval = "weekly";
   };
 
-  services.logind.lidSwitch = "suspend";
+  services.logind.settings.Login.HandleLidSwitch = "suspend";
 
   nix.settings = {
     experimental-features = [

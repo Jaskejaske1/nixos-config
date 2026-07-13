@@ -41,6 +41,35 @@
       echo "Review the staged diff, then commit explicitly:"
       echo "  git commit -m \"describe the configuration change\""
     '')
+
+    (pkgs.writeShellScriptBin "tacos-switch" ''
+      set -euo pipefail
+
+      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
+      cd "$repo_root"
+
+      if [ -n "$(${pkgs.git}/bin/git status --short)" ]; then
+        echo "Refusing to rebuild from a dirty Git tree."
+        echo "Commit or discard changes first so self.rev stays accurate."
+        exit 1
+      fi
+
+      /run/current-system/sw/bin/tacos-validate
+
+      echo
+      printf 'Run sudo nixos-rebuild switch --flake .#tacos? [y/N] '
+      read -r reply
+
+      case "$reply" in
+        [yY]|[yY][eE][sS]) ;;
+        *)
+          echo "Aborted before system activation."
+          exit 0
+          ;;
+      esac
+
+      exec sudo nixos-rebuild switch --flake .#tacos
+    '')
   ];
 
   boot.loader.systemd-boot.enable = true;

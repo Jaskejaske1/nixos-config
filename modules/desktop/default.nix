@@ -7,13 +7,24 @@
 {
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  services.displayManager.defaultSession = "sway";
+
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+  };
 
   services.xserver.xkb = {
     layout = "be";
     variant = "";
   };
   console.keyMap = "be-latin1";
+
+  environment.etc."sway/config.d/10-input.conf".text = ''
+    input * {
+      xkb_layout be
+    }
+  '';
 
   services.printing.enable = true;
   services.pulseaudio.enable = false;
@@ -47,6 +58,9 @@
     vscode
     zed-editor
     ripgrep
+    mako
+    wl-clipboard
+    waybar
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

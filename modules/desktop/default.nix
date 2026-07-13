@@ -53,9 +53,14 @@
     zed-editor
     ripgrep
     brightnessctl
+    bat
+    eza
+    fzf
     gsettings-desktop-schemas
+    lazygit
     pantheon.elementary-icon-theme
     wl-clipboard
+    zoxide
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

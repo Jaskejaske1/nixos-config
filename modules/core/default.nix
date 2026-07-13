@@ -70,6 +70,25 @@
 
       exec sudo nixos-rebuild switch --flake .#tacos
     '')
+
+    (pkgs.writeShellScriptBin "tacos-build" ''
+      set -euo pipefail
+
+      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
+      cd "$repo_root"
+
+      if [ -n "$(${pkgs.git}/bin/git status --short)" ]; then
+        echo "Refusing to build from a dirty Git tree."
+        echo "Commit or discard changes first so self.rev stays accurate."
+        exit 1
+      fi
+
+      /run/current-system/sw/bin/tacos-validate
+
+      echo
+      echo "==> Building tacos system derivation"
+      exec ${pkgs.nix}/bin/nix build .#nixosConfigurations.tacos.config.system.build.toplevel
+    '')
   ];
 
   boot.loader.systemd-boot.enable = true;

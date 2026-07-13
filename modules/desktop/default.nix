@@ -7,7 +7,7 @@
 {
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
-  services.displayManager.defaultSession = "pantheon";
+  services.displayManager.defaultSession = "pantheon-wayland";
   services.desktopManager.pantheon.enable = true;
   services.pantheon.apps.enable = true;
 

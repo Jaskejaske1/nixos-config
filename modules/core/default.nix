@@ -87,7 +87,7 @@
 
       echo
       echo "==> Building tacos system derivation"
-      exec ${pkgs.nix}/bin/nix build .#nixosConfigurations.tacos.config.system.build.toplevel
+      exec ${pkgs.nix}/bin/nix build --no-link .#nixosConfigurations.tacos.config.system.build.toplevel
     '')
 
     (pkgs.writeShellScriptBin "swiss-grab" ''
@@ -127,6 +127,7 @@
   };
 
   services.logind.settings.Login.HandleLidSwitch = "suspend";
+  services.logind.settings.Login.HandleLidSwitchExternalPower = "suspend";
 
   nix.settings = {
     experimental-features = [
@@ -143,6 +144,7 @@
 
       # Set up custom AZERTY aliases
       alias ewa="eza -lah --git"
+      alias obs="obsidian --enable-features=UseOzonePlatform --ozone-platform=wayland"
     '';
   };
 

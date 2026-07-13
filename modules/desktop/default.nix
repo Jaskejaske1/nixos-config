@@ -61,6 +61,7 @@
     fzf
     gsettings-desktop-schemas
     lazygit
+    obsidian
     pantheon.elementary-icon-theme
     wl-clipboard
     zoxide

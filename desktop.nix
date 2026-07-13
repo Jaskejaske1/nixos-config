@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  codex-cli-nix,
+  ...
+}:
 
 {
   # Graphical Environments
@@ -45,8 +50,10 @@
     nixfmt
     nix-output-monitor
     nixd
-    chromium
     vscode
     zed-editor
+
+    # pre-compiled Codex Rust binary
+    codex-cli-nix.packages.${pkgs.system}.default
   ];
 }

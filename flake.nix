@@ -2,18 +2,27 @@
   description = "Jasper's AI-Ready NixOS Flake Configuration";
 
   inputs = {
-    # Point to the official unstable or stable NixOS packages channel
+    # Point to the official stable NixOS packages channel
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+
+    # Add the automated Codex CLI Flake repository
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
   };
 
+  # Added codex-cli-nix into the outputs argument list here
   outputs =
-    { self, nixpkgs, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      codex-cli-nix,
+      ...
+    }@inputs:
     {
       nixosConfigurations = {
-        # This name MUST match your networking.hostName (tacos)
         tacos = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit self; };
+          # Pass the flake inputs downstream so desktop.nix can read them
+          specialArgs = { inherit self codex-cli-nix; };
           modules = [
             ./configuration.nix
           ];

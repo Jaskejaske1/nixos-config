@@ -23,6 +23,5 @@
     alang=eng,en
     slang=eng,en
     audio-channels=stereo
-    af=lavfi="[pan=stereo|FL=0.5*FC+0.707*FL+0.707*BL|FR=0.5*FC+0.707*FR+0.707*BR]"
   '';
 }

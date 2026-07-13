@@ -54,6 +54,6 @@
     zed-editor
 
     # pre-compiled Codex Rust binary
-    codex-cli-nix.packages.${pkgs.system}.default
+    codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

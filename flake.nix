@@ -6,16 +6,18 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
-    nixosConfigurations = {
-      # This name MUST match your networking.hostName (tacos)
-      tacos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-	specialArgs = { inherit self; };
-        modules = [
-          ./configuration.nix
-        ];
+  outputs =
+    { self, nixpkgs, ... }@inputs:
+    {
+      nixosConfigurations = {
+        # This name MUST match your networking.hostName (tacos)
+        tacos = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit self; };
+          modules = [
+            ./configuration.nix
+          ];
+        };
       };
     };
-  };
 }

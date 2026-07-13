@@ -28,7 +28,10 @@
   users.users."jaske" = {
     isNormalUser = true;
     description = "Jaske";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
   };
 
   # Software Management

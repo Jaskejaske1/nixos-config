@@ -1,4 +1,9 @@
-{ config, pkgs, self, ... }: # <-- Added 'self' here
+{
+  config,
+  pkgs,
+  self,
+  ...
+}:
 
 {
   imports = [
@@ -8,7 +13,8 @@
   ];
 
   # Explicitly tell NixOS to read the Git commit hash from the Flake
-  system.configurationRevision = if (self ? rev) then self.rev else throw "Commit your changes first!";
+  system.configurationRevision =
+    if (self ? rev) then self.rev else throw "Commit your changes first!";
 
   system.stateVersion = "26.05";
 }

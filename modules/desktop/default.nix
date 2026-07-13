@@ -6,6 +6,7 @@
 
 {
   services.xserver.enable = true;
+  services.xserver.desktopManager.xterm.enable = false;
   services.displayManager.gdm.enable = false;
   services.xserver.displayManager.lightdm.enable = true;
   services.xserver.displayManager.lightdm.greeters.pantheon.enable = true;
@@ -49,10 +50,11 @@
     nixfmt
     nix-output-monitor
     nixd
-    vscode
     zed-editor
     ripgrep
     brightnessctl
+    gsettings-desktop-schemas
+    pantheon.elementary-icon-theme
     wl-clipboard
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];

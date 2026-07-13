@@ -89,6 +89,17 @@
       echo "==> Building tacos system derivation"
       exec ${pkgs.nix}/bin/nix build .#nixosConfigurations.tacos.config.system.build.toplevel
     '')
+
+    (pkgs.writeShellScriptBin "swiss-grab" ''
+      set -euo pipefail
+
+      if [ "$#" -eq 0 ]; then
+        echo "Usage: swiss-grab <url> [aria2c args...]"
+        exit 1
+      fi
+
+      exec ${pkgs.aria2}/bin/aria2c -x 16 -s 16 -j 16 "$@"
+    '')
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -114,6 +125,8 @@
     enable = true;
     interval = "weekly";
   };
+
+  services.logind.lidSwitch = "suspend";
 
   nix.settings = {
     experimental-features = [

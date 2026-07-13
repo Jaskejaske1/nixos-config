@@ -44,8 +44,11 @@
   programs.firefox.enable = true;
 
   environment.systemPackages = with pkgs; [
+    aria2
     wget
     git
+    gnome-maps
+    gpxsee
     neovim
     nixfmt
     nix-output-monitor

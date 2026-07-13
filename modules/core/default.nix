@@ -1,6 +1,48 @@
 { pkgs, ... }:
 
 {
+  environment.systemPackages = [
+    (pkgs.writeShellScriptBin "tacos-validate" ''
+      set -euo pipefail
+
+      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
+      cd "$repo_root"
+
+      echo "==> Formatting Nix files"
+      mapfile -t nix_files < <(
+        {
+          printf '%s\n' flake.nix
+          ${pkgs.findutils}/bin/find hosts modules -type f -name '*.nix'
+        } | ${pkgs.coreutils}/bin/sort
+      )
+      ${pkgs.nixfmt}/bin/nixfmt "''${nix_files[@]}"
+
+      echo "==> Evaluating tacos system derivation"
+      ${pkgs.nix}/bin/nix eval .#nixosConfigurations.tacos.config.system.build.toplevel.drvPath
+
+      echo
+      echo "Validation completed without activating the system."
+    '')
+
+    (pkgs.writeShellScriptBin "tacos-stage" ''
+      set -euo pipefail
+
+      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
+      cd "$repo_root"
+
+      echo "==> Staging repository changes"
+      ${pkgs.git}/bin/git add .
+
+      echo
+      echo "Current staged state:"
+      ${pkgs.git}/bin/git status --short
+
+      echo
+      echo "Review the staged diff, then commit explicitly:"
+      echo "  git commit -m \"describe the configuration change\""
+    '')
+  ];
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 

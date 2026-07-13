@@ -8,6 +8,7 @@
     ./hardware-configuration.nix
     ../../modules/core
     ../../modules/desktop
+    ../../modules/profiles/road-trip.nix
   ];
 
   system.configurationRevision =

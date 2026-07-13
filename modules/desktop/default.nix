@@ -1,24 +1,20 @@
 {
-  config,
   pkgs,
   codex-cli-nix,
   ...
 }:
 
 {
-  # Graphical Environments
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
-  # Keymap Configurations
   services.xserver.xkb = {
     layout = "be";
     variant = "";
   };
   console.keyMap = "be-latin1";
 
-  # Hardware Services (Printing & Audio)
   services.printing.enable = true;
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -29,7 +25,6 @@
     pulse.enable = true;
   };
 
-  # User Configuration
   users.users."jaske" = {
     isNormalUser = true;
     description = "Jaske";
@@ -39,7 +34,6 @@
     ];
   };
 
-  # Software Management
   nixpkgs.config.allowUnfree = true;
   programs.firefox.enable = true;
 
@@ -53,7 +47,6 @@
     vscode
     zed-editor
     ripgrep
-    # pre-compiled Codex Rust binary
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

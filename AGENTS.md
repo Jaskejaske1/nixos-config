@@ -20,6 +20,59 @@ Treat the requirements below as mandatory unless the user explicitly overrides t
 - Do not ignore warnings from the Nix evaluator, `nixos-rebuild`, or language tooling.
 - Make changes in a way that respects the repository's Git-driven rebuild workflow.
 
+## Operating Model
+
+This repository is managed under a narrow AI operating model.
+
+- The human owner defines system policy, architectural direction, and approval thresholds.
+- The coding assistant is the primary implementation agent inside those rules.
+- Git history is the control plane for system change.
+- Declarative configuration is preferred over ad hoc imperative mutation.
+- The assistant must optimize for transparency, auditability, and rollback safety rather than autonomy for its own sake.
+
+## Execution Boundaries
+
+### Changes the Assistant May Make Without Prior Approval
+
+- Refactor repository structure to match documented conventions.
+- Fix Nix syntax issues, evaluator warnings, deprecations, and `nixd` diagnostics.
+- Remove unused arguments, unused imports, and other low-risk configuration noise.
+- Improve comments, naming, formatting, and module organization.
+- Add or adjust validation commands that do not activate the system configuration.
+- Update documentation so it matches the real repository behavior.
+
+### Changes That Always Require Explicit Approval
+
+- Running `nixos-rebuild switch`, `boot`, `test`, or any command that activates a new system state.
+- Changing bootloader behavior, disk layout, swap layout, filesystems, impermanence strategy, or hardware-specific boot logic.
+- Adding, removing, or rotating secrets, credentials, SSH keys, tokens, or age/sops material.
+- Opening network-facing services, changing firewall posture, or exposing new remote access paths.
+- Introducing virtualization, container, or sandboxing changes that materially expand system privilege boundaries.
+- Running destructive cleanup, deleting generations, or garbage-collecting the store outside a clearly approved maintenance step.
+- Installing or enabling software whose purpose is unclear, high-risk, invasive, or unrelated to the requested task.
+
+## Package and Service Policy
+
+### Package Additions
+
+- Prefer packages that clearly support the declared workstation workflow, NixOS management, or approved user requests.
+- Prefer Zed-compatible tooling over editor ecosystems that pull the setup toward VS Code or terminal-only workflows.
+- Keep the default system package set intentionally small; remove tools that are no longer justified.
+- When adding packages, prefer well-maintained nixpkgs packages or explicitly declared flake inputs over opaque one-off installation methods.
+
+### Service Changes
+
+- Prefer disabled-by-default network exposure.
+- New background services, timers, or daemons must have a clear operational purpose and should be documented in the same change.
+- Shared modules under `modules/` must remain host-blind; host-specific services or identity settings belong under `hosts/`.
+
+## Secrets and Sensitive Data Policy
+
+- Do not commit plaintext secrets, credentials, recovery codes, tokens, or private keys.
+- Do not embed secrets directly in Nix files, shell scripts, or documentation.
+- If secret material is needed, stop and require an explicit user-approved secret management approach before proceeding.
+- Treat machine identity, authentication material, and remote access configuration as sensitive even if not formally secret.
+
 ## GitOps Workflow Requirements
 
 This repository follows a strict commit-before-build workflow.
@@ -85,6 +138,16 @@ input-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
 - Do not rebuild against uncommitted configuration changes.
 - Do not leave the repository in a partially migrated state after addressing evaluator warnings.
 
+### Validation Ladder
+
+Use the least invasive step that can still validate the change:
+
+1. Format the relevant Nix files with `nixfmt`.
+2. Run non-activating evaluation such as `nix eval` or other read-only checks.
+3. Commit the change set required for evaluation or rebuild.
+4. Run build-oriented validation before activation when practical.
+5. Activate the configuration only after explicit approval.
+
 ## Storage Maintenance Policy
 
 Nix store cleanup should be handled conservatively.
@@ -125,14 +188,24 @@ programs.nix-ld.enable = true;
 
 Use this when external unpatched binaries need to run on the host.
 
+## Repository Structure Policy
+
+- `modules/core/` is for shared base system behavior such as locale, Nix settings, boot defaults, and maintenance-safe platform settings.
+- `modules/desktop/` is for graphical environment, userland workstation tooling, and desktop-facing services.
+- `hosts/<name>/` is for machine-specific imports, host names, hardware configuration, and pinned state version.
+- Do not move host-specific values back into shared modules.
+- Keep modules small, focused, and free of unused parameters.
+
 ## Assistant Behavior Summary
 
 When operating in this repository, assistants should:
 
+- Work as an implementation agent, not as an unsupervised operator.
 - Commit relevant changes before rebuilds.
 - Commit `flake.lock` updates when flake input changes require it.
 - Fix warnings instead of tolerating them.
 - Keep Nix modules clean and minimal.
+- Escalate for approval before any live system activation or destructive maintenance.
 - Avoid unsafe cleanup until the system is known-good.
 - Preserve Zed-oriented workflow assumptions.
 - Respect the need for `nix-ld` when external binaries are involved.

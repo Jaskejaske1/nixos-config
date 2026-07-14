@@ -52,6 +52,7 @@
     wayland-protocols
     libx11
     libxcb
+    libxcb.dev
     libxcursor
     libxext
     libxfixes
@@ -61,6 +62,8 @@
     libxscrnsaver
     libxxf86vm
     pipewire
+    xcbutil
+    xcbutil.dev
     zoxide
   ];
 

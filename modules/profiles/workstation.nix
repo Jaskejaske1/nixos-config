@@ -16,8 +16,10 @@
   };
 
   environment.systemPackages = with pkgs; [
+    alsa-lib
     bat
     cmake
+    dbus
     php83Packages.composer
     eza
     fnm
@@ -25,8 +27,13 @@
     gcc13
     gl3w
     lazygit
+    libdrm
+    libffi
     libGL
     libGL.dev
+    libdecor
+    libpulseaudio
+    libxkbcommon
     mesa
     ninja
     nodejs_24
@@ -35,10 +42,25 @@
     picocom
     pkg-config
     powershell
+    python3
     ripgrep
     sdl3
     sdl3.dev
+    systemd
     uv
+    wayland
+    wayland-protocols
+    libx11
+    libxcb
+    libxcursor
+    libxext
+    libxfixes
+    libxi
+    libxrandr
+    libxrender
+    libxscrnsaver
+    libxxf86vm
+    pipewire
     zoxide
   ];
 

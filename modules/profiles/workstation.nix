@@ -18,7 +18,7 @@
   environment.systemPackages = with pkgs; [
     bat
     cmake
-    composer
+    php83Packages.composer
     eza
     fnm
     fzf

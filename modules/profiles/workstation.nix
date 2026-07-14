@@ -18,6 +18,7 @@
   environment.systemPackages = with pkgs; [
     bat
     cmake
+    composer
     eza
     fnm
     fzf

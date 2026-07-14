@@ -54,17 +54,10 @@
     nix-output-monitor
     nixd
     zed-editor
-    ripgrep
     brightnessctl
-    bat
-    eza
-    fzf
     gsettings-desktop-schemas
-    lazygit
-    obsidian
     pantheon.elementary-icon-theme
     wl-clipboard
-    zoxide
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

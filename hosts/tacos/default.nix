@@ -9,6 +9,7 @@
     ../../modules/core
     ../../modules/desktop
     ../../modules/profiles/road-trip.nix
+    ../../modules/profiles/workstation.nix
   ];
 
   system.configurationRevision =

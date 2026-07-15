@@ -1,20 +1,6 @@
 { pkgs, ... }:
 
 {
-  environment.pathsToLink = [
-    "/include"
-    "/lib/cmake"
-    "/lib/pkgconfig"
-    "/share/pkgconfig"
-  ];
-
-  environment.variables = {
-    CMAKE_PREFIX_PATH = "/run/current-system/sw";
-    CPATH = "/run/current-system/sw/include";
-    LIBRARY_PATH = "/run/current-system/sw/lib";
-    PKG_CONFIG_PATH = "/run/current-system/sw/lib/pkgconfig:/run/current-system/sw/share/pkgconfig";
-  };
-
   environment.systemPackages = with pkgs; [
     alsa-lib
     cmake

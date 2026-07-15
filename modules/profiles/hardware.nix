@@ -1,7 +1,11 @@
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 {
   environment.systemPackages = with pkgs; [ picocom ];
 
-  users.users.jaske.extraGroups = [ "dialout" ];
+  users.users.${config.tacos.username}.extraGroups = [ "dialout" ];
 }

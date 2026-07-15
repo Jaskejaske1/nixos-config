@@ -7,6 +7,8 @@
 
 let
   repoRoot = config.tacos.repoPath;
+  username = config.tacos.username;
+  homeDir = "/home/${username}";
   flakeRef = "${repoRoot}#tacos";
   flakeDrvAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel.drvPath";
   flakeBuildAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel";
@@ -19,21 +21,18 @@ in
     description = "Absolute path to the local tacos NixOS flake repository.";
   };
 
+  options.tacos.username = lib.mkOption {
+    type = lib.types.str;
+    default = "jaske";
+    description = "Primary local username for host-scoped services and access control.";
+  };
+
   config = {
     environment.systemPackages = [
       (pkgs.writeShellScriptBin "tacos-validate" ''
         set -euo pipefail
 
         repo_root=${lib.escapeShellArg repoRoot}
-
-        echo "==> Formatting Nix files"
-        mapfile -t nix_files < <(
-          {
-            printf '%s\n' "$repo_root/flake.nix"
-            ${pkgs.findutils}/bin/find "$repo_root/hosts" "$repo_root/modules" -type f -name '*.nix'
-          } | ${pkgs.coreutils}/bin/sort
-        )
-        ${pkgs.nixfmt}/bin/nixfmt "''${nix_files[@]}"
 
         echo "==> Evaluating tacos system derivation"
         ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
@@ -153,10 +152,10 @@ in
 
     services.syncthing = {
       enable = true;
-      user = "jaske";
-      dataDir = "/home/jaske/.local/share/syncthing";
-      configDir = "/home/jaske/.config/syncthing";
-      openDefaultPorts = true;
+      user = username;
+      dataDir = "${homeDir}/.local/share/syncthing";
+      configDir = "${homeDir}/.config/syncthing";
+      openDefaultPorts = false;
     };
 
     services.logind.settings.Login.HandleLidSwitch = "suspend";

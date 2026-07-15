@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 {
   programs.wireshark = {
@@ -6,5 +10,5 @@
     package = pkgs.wireshark;
   };
 
-  users.users.jaske.extraGroups = [ "wireshark" ];
+  users.users.${config.tacos.username}.extraGroups = [ "wireshark" ];
 }

@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   codex-cli-nix,
   ...
@@ -36,7 +37,7 @@
   };
   services.udev.packages = [ pkgs.gnome-settings-daemon ];
 
-  users.users."jaske" = {
+  users.users.${config.tacos.username} = {
     isNormalUser = true;
     description = "Jaske";
     extraGroups = [

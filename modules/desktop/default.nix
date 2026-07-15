@@ -1,24 +1,14 @@
 {
-  config,
   pkgs,
   codex-cli-nix,
   ...
 }:
 
 {
+  imports = [ ./kde.nix ];
+
   services.xserver.enable = true;
   services.xserver.desktopManager.xterm.enable = false;
-  services.displayManager.gdm.enable = false;
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.displayManager.lightdm.greeters.pantheon.enable = true;
-  services.displayManager.defaultSession = "pantheon-wayland";
-  services.desktopManager.pantheon.enable = true;
-  services.pantheon.apps.enable = true;
-  environment.pantheon.excludePackages = with pkgs.pantheon; [
-    epiphany
-    elementary-calendar
-    elementary-mail
-  ];
 
   services.xserver.xkb = {
     layout = "be";
@@ -34,16 +24,6 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-  };
-  services.udev.packages = [ pkgs.gnome-settings-daemon ];
-
-  users.users.${config.tacos.username} = {
-    isNormalUser = true;
-    description = "Jaske";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -63,7 +43,6 @@
     zed-editor
     brightnessctl
     gsettings-desktop-schemas
-    pantheon.elementary-icon-theme
     wl-clipboard
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];

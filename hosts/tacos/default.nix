@@ -1,4 +1,5 @@
 {
+  config,
   self,
   ...
 }:
@@ -17,6 +18,17 @@
 
   system.configurationRevision =
     if (self ? rev) then self.rev else throw "Commit your changes first!";
+
+  tacos.username = "jaske";
+
+  users.users.${config.tacos.username} = {
+    isNormalUser = true;
+    description = "Jaske";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+  };
 
   networking.hostName = "tacos";
   system.stateVersion = "26.05";

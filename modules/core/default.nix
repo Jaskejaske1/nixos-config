@@ -12,12 +12,13 @@ let
   flakeRef = "${repoRoot}#tacos";
   flakeDrvAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel.drvPath";
   flakeBuildAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel";
+  btrfs = "${pkgs.btrfs-progs}/bin/btrfs";
 in
 
 {
   options.tacos.repoPath = lib.mkOption {
     type = lib.types.str;
-    default = "/home/jaske/Projects/nixos-config";
+    default = "/home/${config.tacos.username}/Projects/nixos-config";
     description = "Absolute path to the local tacos NixOS flake repository.";
   };
 
@@ -126,6 +127,7 @@ in
     ];
 
     networking.networkmanager.enable = true;
+    networking.firewall.enable = true;
 
     time.timeZone = "Europe/Brussels";
     i18n.defaultLocale = "en_US.UTF-8";
@@ -150,12 +152,61 @@ in
 
     services.journald.extraConfig = "SystemMaxUse=100M";
 
+    system.activationScripts.ensureSnapperSubvolumes.text = ''
+      ensure_snapshot_subvolume() {
+        local path="$1"
+
+        if ${btrfs} subvolume show "$path" >/dev/null 2>&1; then
+          return 0
+        fi
+
+        if [ -e "$path" ]; then
+          echo "Refusing to continue: $path exists but is not a Btrfs subvolume." >&2
+          exit 1
+        fi
+
+        ${btrfs} subvolume create "$path"
+      }
+
+      ensure_snapshot_subvolume "/.snapshots"
+      ensure_snapshot_subvolume "/home/.snapshots"
+    '';
+
+    services.snapper = {
+      snapshotRootOnBoot = true;
+      persistentTimer = true;
+      configs = {
+        root = {
+          SUBVOLUME = "/";
+          ALLOW_USERS = [ username ];
+          TIMELINE_CREATE = true;
+          TIMELINE_CLEANUP = true;
+          TIMELINE_LIMIT_HOURLY = 8;
+          TIMELINE_LIMIT_DAILY = 7;
+          TIMELINE_LIMIT_WEEKLY = 4;
+          TIMELINE_LIMIT_MONTHLY = 3;
+        };
+        home = {
+          SUBVOLUME = "/home";
+          ALLOW_USERS = [ username ];
+          TIMELINE_CREATE = true;
+          TIMELINE_CLEANUP = true;
+          TIMELINE_LIMIT_HOURLY = 8;
+          TIMELINE_LIMIT_DAILY = 7;
+          TIMELINE_LIMIT_WEEKLY = 4;
+          TIMELINE_LIMIT_MONTHLY = 3;
+        };
+      };
+    };
+
     services.syncthing = {
       enable = true;
       user = username;
       dataDir = "${homeDir}/.local/share/syncthing";
       configDir = "${homeDir}/.config/syncthing";
+      guiAddress = "127.0.0.1:8384";
       openDefaultPorts = false;
+      settings.options.localAnnounceEnabled = false;
     };
 
     services.logind.settings.Login.HandleLidSwitch = "suspend";

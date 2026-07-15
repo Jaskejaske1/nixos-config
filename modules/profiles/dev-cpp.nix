@@ -17,16 +17,10 @@
 
   environment.systemPackages = with pkgs; [
     alsa-lib
-    bat
     cmake
     dbus
-    php83Packages.composer
-    eza
-    fnm
-    fzf
     gcc13
     gl3w
-    lazygit
     libdrm
     libffi
     libGL
@@ -36,18 +30,12 @@
     libxkbcommon
     mesa
     ninja
-    nodejs_24
-    obsidian
-    php83
-    picocom
     pkg-config
-    powershell
+    pipewire
     python3
-    ripgrep
     sdl3
     sdl3.dev
     systemd
-    uv
     wayland
     wayland-protocols
     libx11
@@ -61,19 +49,7 @@
     libxrender
     libxscrnsaver
     libxxf86vm
-    pipewire
     xcbutil
     xcbutil.dev
-    zoxide
-  ];
-
-  programs.wireshark = {
-    enable = true;
-    package = pkgs.wireshark;
-  };
-
-  users.users.jaske.extraGroups = [
-    "dialout"
-    "wireshark"
   ];
 }

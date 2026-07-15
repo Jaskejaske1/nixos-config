@@ -1,24 +1,30 @@
 { pkgs, ... }:
 
+let
+  repoRoot = "/home/jaske/Projects/nixos-config";
+  flakeRef = "${repoRoot}#tacos";
+  flakeDrvAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel.drvPath";
+  flakeBuildAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel";
+in
+
 {
   environment.systemPackages = [
     (pkgs.writeShellScriptBin "tacos-validate" ''
       set -euo pipefail
 
-      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
-      cd "$repo_root"
+      repo_root='${repoRoot}'
 
       echo "==> Formatting Nix files"
       mapfile -t nix_files < <(
         {
-          printf '%s\n' flake.nix
-          ${pkgs.findutils}/bin/find hosts modules -type f -name '*.nix'
+          printf '%s\n' "$repo_root/flake.nix"
+          ${pkgs.findutils}/bin/find "$repo_root/hosts" "$repo_root/modules" -type f -name '*.nix'
         } | ${pkgs.coreutils}/bin/sort
       )
       ${pkgs.nixfmt}/bin/nixfmt "''${nix_files[@]}"
 
       echo "==> Evaluating tacos system derivation"
-      ${pkgs.nix}/bin/nix eval .#nixosConfigurations.tacos.config.system.build.toplevel.drvPath
+      ${pkgs.nix}/bin/nix eval '${flakeDrvAttr}'
 
       echo
       echo "Validation completed without activating the system."
@@ -27,28 +33,26 @@
     (pkgs.writeShellScriptBin "tacos-stage" ''
       set -euo pipefail
 
-      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
-      cd "$repo_root"
+      repo_root='${repoRoot}'
 
       echo "==> Staging repository changes"
-      ${pkgs.git}/bin/git add .
+      ${pkgs.git}/bin/git -C "$repo_root" add .
 
       echo
       echo "Current staged state:"
-      ${pkgs.git}/bin/git status --short
+      ${pkgs.git}/bin/git -C "$repo_root" status --short
 
       echo
       echo "Review the staged diff, then commit explicitly:"
-      echo "  git commit -m \"describe the configuration change\""
+      echo "  git -C $repo_root commit -m \"describe the configuration change\""
     '')
 
     (pkgs.writeShellScriptBin "tacos-switch" ''
       set -euo pipefail
 
-      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
-      cd "$repo_root"
+      repo_root='${repoRoot}'
 
-      if [ -n "$(${pkgs.git}/bin/git status --short)" ]; then
+      if [ -n "$(${pkgs.git}/bin/git -C "$repo_root" status --short)" ]; then
         echo "Refusing to rebuild from a dirty Git tree."
         echo "Commit or discard changes first so self.rev stays accurate."
         exit 1
@@ -68,16 +72,15 @@
           ;;
       esac
 
-      exec sudo nixos-rebuild switch --flake .#tacos
+      exec sudo nixos-rebuild switch --flake '${flakeRef}'
     '')
 
     (pkgs.writeShellScriptBin "tacos-build" ''
       set -euo pipefail
 
-      repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel)"
-      cd "$repo_root"
+      repo_root='${repoRoot}'
 
-      if [ -n "$(${pkgs.git}/bin/git status --short)" ]; then
+      if [ -n "$(${pkgs.git}/bin/git -C "$repo_root" status --short)" ]; then
         echo "Refusing to build from a dirty Git tree."
         echo "Commit or discard changes first so self.rev stays accurate."
         exit 1
@@ -87,7 +90,7 @@
 
       echo
       echo "==> Building tacos system derivation"
-      exec ${pkgs.nix}/bin/nix build --no-link .#nixosConfigurations.tacos.config.system.build.toplevel
+      exec ${pkgs.nix}/bin/nix build --no-link '${flakeBuildAttr}'
     '')
 
     (pkgs.writeShellScriptBin "swiss-grab" ''

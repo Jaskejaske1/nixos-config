@@ -52,6 +52,7 @@
     aria2
     wget
     git
+    discord
     gnome-maps
     gpxsee
     neovim

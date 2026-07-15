@@ -132,6 +132,10 @@
     interval = "weekly";
   };
 
+  services.fstrim.enable = true;
+
+  services.journald.extraConfig = "SystemMaxUse=100M";
+
   services.syncthing = {
     enable = true;
     user = "jaske";

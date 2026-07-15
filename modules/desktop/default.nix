@@ -13,6 +13,11 @@
   services.displayManager.defaultSession = "pantheon-wayland";
   services.desktopManager.pantheon.enable = true;
   services.pantheon.apps.enable = true;
+  environment.pantheon.excludePackages = with pkgs.pantheon; [
+    epiphany
+    elementary-calendar
+    elementary-mail
+  ];
 
   services.xserver.xkb = {
     layout = "be";

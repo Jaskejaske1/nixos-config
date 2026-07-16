@@ -5,6 +5,7 @@
     alsa-lib
     cmake
     dbus
+    gdb
     gcc13
     gl3w
     libdrm

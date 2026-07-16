@@ -21,3 +21,5 @@ Before running any build or activation step, Codex must follow the atomic helper
 5. Run `tacos-eval` for read-only derivation evaluation.
 6. Run `tacos-build` for non-activating build validation.
 7. Run `tacos-switch` only when activation is explicitly approved.
+
+The deprecated `tacos-validate` alias should not be introduced into new workflows.

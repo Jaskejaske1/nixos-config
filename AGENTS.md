@@ -84,7 +84,7 @@ The repository helper commands are intentionally atomic.
 - `tacos-status` reports repo path, current Git revision, and working tree state without mutating anything.
 - `tacos-fmt` formats tracked Nix files under the flake repository.
 - `tacos-eval` performs a read-only `nix eval` of the tacos system derivation.
-- `tacos-validate` is a compatibility shim equivalent to `tacos-eval`.
+- `tacos-validate` is a deprecated compatibility alias for `tacos-eval`.
 - `tacos-stage` stages repository changes with `git add .` from the configured repo root.
 - `tacos-build` performs a non-activating `nix build --no-link` of the committed tacos system.
 - `tacos-switch` activates the committed tacos system after an explicit prompt.
@@ -93,11 +93,12 @@ Do not assume these commands compose hidden steps for you.
 - `tacos-build` does not format, stage, or evaluate first.
 - `tacos-switch` does not format, stage, evaluate, or dry-build first.
 - `tacos-eval` does not modify files.
+- `tacos-validate` should not be used in new automation or documentation.
 - `tacos-fmt` does not stage or commit files.
 
 ### Side Effects And Idempotency
 
-- `tacos-status`, `tacos-eval`, and `tacos-validate` are read-only and safe to rerun.
+- `tacos-status`, `tacos-eval`, and the deprecated `tacos-validate` alias are read-only and safe to rerun.
 - `tacos-fmt` mutates repository files, but it should be idempotent after the first successful run.
 - `tacos-stage` mutates the Git index, but repeated runs against the same tree should converge on the same staged state.
 - `tacos-build` is operationally idempotent for the repository, but it can still realise store paths and consume build time.

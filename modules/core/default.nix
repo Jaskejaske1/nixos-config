@@ -77,6 +77,7 @@ in
       (pkgs.writeShellScriptBin "tacos-validate" ''
         set -euo pipefail
 
+        echo "warning: tacos-validate is deprecated; use tacos-eval" >&2
         echo "==> Evaluating tacos system derivation"
         exec ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
       '')

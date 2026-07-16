@@ -30,6 +30,27 @@ in
 
   config = {
     environment.systemPackages = [
+      (pkgs.writeShellScriptBin "tacos-status" ''
+        set -euo pipefail
+
+        repo_root=${lib.escapeShellArg repoRoot}
+
+        echo "==> tacos repository"
+        echo "$repo_root"
+
+        echo
+        echo "==> git revision"
+        ${pkgs.git}/bin/git -C "$repo_root" rev-parse --short HEAD
+
+        echo
+        echo "==> working tree"
+        if [ -n "$(${pkgs.git}/bin/git -C "$repo_root" status --short)" ]; then
+          ${pkgs.git}/bin/git -C "$repo_root" status --short
+        else
+          echo "clean"
+        fi
+      '')
+
       (pkgs.writeShellScriptBin "tacos-fmt" ''
         set -euo pipefail
 

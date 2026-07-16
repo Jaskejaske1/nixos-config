@@ -13,6 +13,12 @@ let
   flakeDrvAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel.drvPath";
   flakeBuildAttr = "${repoRoot}#nixosConfigurations.tacos.config.system.build.toplevel";
   btrfs = "${pkgs.btrfs-progs}/bin/btrfs";
+  tacosEval = pkgs.writeShellScriptBin "tacos-eval" ''
+    set -euo pipefail
+
+    echo "==> Evaluating tacos system derivation"
+    exec ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
+  '';
 in
 
 {
@@ -67,19 +73,13 @@ in
         ${pkgs.nixfmt}/bin/nixfmt "''${nix_files[@]}"
       '')
 
-      (pkgs.writeShellScriptBin "tacos-eval" ''
-        set -euo pipefail
-
-        echo "==> Evaluating tacos system derivation"
-        exec ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
-      '')
+      tacosEval
 
       (pkgs.writeShellScriptBin "tacos-validate" ''
         set -euo pipefail
 
         echo "warning: tacos-validate is deprecated; use tacos-eval" >&2
-        echo "==> Evaluating tacos system derivation"
-        exec ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
+        exec ${tacosEval}/bin/tacos-eval "$@"
       '')
 
       (pkgs.writeShellScriptBin "tacos-stage" ''
@@ -241,7 +241,7 @@ in
       guiAddress = "127.0.0.1:8384";
       openDefaultPorts = false;
       settings.options = {
-        localAnnounceEnabled = false;
+        localAnnounceEnabled = true;
         globalAnnounceEnabled = false;
         relaysEnabled = false;
         natEnabled = false;

@@ -104,6 +104,19 @@ Do not assume these commands compose hidden steps for you.
 - `tacos-build` is operationally idempotent for the repository, but it can still realise store paths and consume build time.
 - `tacos-switch` is intentionally not treated as side-effect-free, even when rerunning the same generation, because it can restart services and re-activate system state.
 
+### Command Classification
+
+When describing or automating `tacos-` commands, use the following categories exactly:
+
+- `read-only`: `tacos-status`, `tacos-eval`, and the deprecated `tacos-validate` alias.
+- `repo-writing`: `tacos-fmt` and `tacos-stage`.
+- `store-writing`: `tacos-build`, because it can realise or fetch store paths even though it does not mutate the Git tree.
+- `system-activating`: `tacos-switch`, because it can restart services and change live system state.
+
+Do not describe `tacos-build` as side-effect-free.
+Do not describe `tacos-fmt` or `tacos-stage` as read-only.
+Do not collapse `idempotent` and `no side effects` into the same meaning.
+
 ### Commit Before Rebuild
 
 - Stage and commit configuration changes before running any system rebuild.

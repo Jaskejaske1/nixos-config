@@ -21,5 +21,6 @@ Before running any build or activation step, Codex must follow the atomic helper
 5. Run `tacos-eval` for read-only derivation evaluation.
 6. Run `tacos-build` for non-activating build validation.
 7. Run `tacos-switch` only when activation is explicitly approved.
+8. If `docs/wiki/` changed and the switch succeeded, run `tacos-wiki` to publish the committed wiki content. This is a `remote-writing` command.
 
 The deprecated `tacos-validate` alias should not be introduced into new workflows.

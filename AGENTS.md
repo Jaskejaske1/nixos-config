@@ -86,11 +86,13 @@ The repository helper commands are intentionally atomic.
 - `tacos-eval` performs a read-only `nix eval` of the tacos system derivation.
 - `tacos-validate` is a deprecated compatibility alias for `tacos-eval`.
 - `tacos-stage` stages repository changes with `git add .` from the configured repo root.
+- `tacos-wiki` publishes the committed `docs/wiki/` tree to the GitHub wiki repository.
 - `tacos-build` performs a non-activating `nix build --no-link` of the committed tacos system.
 - `tacos-switch` activates the committed tacos system after an explicit prompt.
 
 Do not assume these commands compose hidden steps for you.
 - `tacos-build` does not format, stage, or evaluate first.
+- `tacos-wiki` does not format, stage, evaluate, build, or switch first.
 - `tacos-switch` does not format, stage, evaluate, or dry-build first.
 - `tacos-eval` does not modify files.
 - `tacos-validate` should not be used in new automation or documentation.
@@ -101,6 +103,7 @@ Do not assume these commands compose hidden steps for you.
 - `tacos-status`, `tacos-eval`, and the deprecated `tacos-validate` alias are read-only and safe to rerun.
 - `tacos-fmt` mutates repository files, but it should be idempotent after the first successful run.
 - `tacos-stage` mutates the Git index, but repeated runs against the same tree should converge on the same staged state.
+- `tacos-wiki` writes to a remote Git repository and may create or push new wiki commits.
 - `tacos-build` is operationally idempotent for the repository, but it can still realise store paths and consume build time.
 - `tacos-switch` is intentionally not treated as side-effect-free, even when rerunning the same generation, because it can restart services and re-activate system state.
 
@@ -110,12 +113,15 @@ When describing or automating `tacos-` commands, use the following categories ex
 
 - `read-only`: `tacos-status`, `tacos-eval`, and the deprecated `tacos-validate` alias.
 - `repo-writing`: `tacos-fmt` and `tacos-stage`.
+- `remote-writing`: `tacos-wiki`, because it clones, commits, and pushes to the GitHub wiki repository.
 - `store-writing`: `tacos-build`, because it can realise or fetch store paths even though it does not mutate the Git tree.
 - `system-activating`: `tacos-switch`, because it can restart services and change live system state.
 
 Do not describe `tacos-build` as side-effect-free.
 Do not describe `tacos-fmt` or `tacos-stage` as read-only.
 Do not collapse `idempotent` and `no side effects` into the same meaning.
+
+Whenever you make changes to files inside the `docs/wiki/` directory, you must run `tacos-wiki` after a successful `tacos-switch` to publish the updated documentation live.
 
 ### Commit Before Rebuild
 

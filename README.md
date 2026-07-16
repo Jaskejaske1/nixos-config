@@ -51,12 +51,14 @@ The helper commands are intentionally atomic. They do not compose hidden steps.
 | `tacos-eval` | Read-only `nix eval` of the system derivation | `read-only` |
 | `tacos-validate` | Deprecated alias for `tacos-eval` | `read-only` |
 | `tacos-stage` | Stage repository changes | `repo-writing` |
+| `tacos-wiki` | Publish committed `docs/wiki/` content to the GitHub wiki repo | `remote-writing` |
 | `tacos-build` | Non-activating `nix build --no-link` of committed system | `store-writing` |
 | `tacos-switch` | Activate the committed system after an explicit prompt | `system-activating` |
 
 Important distinctions:
 
 - `idempotent` does not mean `side-effect-free`.
+- `tacos-wiki` clones, commits, and pushes to a remote Git repository.
 - `tacos-build` can fetch or realise store paths.
 - `tacos-fmt` changes tracked files.
 - `tacos-switch` changes live system state and requires explicit approval.
@@ -93,6 +95,8 @@ Only run `tacos-switch` after:
 - `tacos-eval` succeeds
 - `tacos-build` succeeds when practical
 - live activation is explicitly approved
+
+If `docs/wiki/` changed, run `tacos-wiki` after the successful switch so the GitHub wiki matches the activated repository state.
 
 ## Guardrails
 

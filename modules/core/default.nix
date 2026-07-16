@@ -99,6 +99,50 @@ in
         echo "  git -C $repo_root commit -m \"describe the configuration change\""
       '')
 
+      (pkgs.writeShellScriptBin "tacos-wiki" ''
+        set -euo pipefail
+
+        repo_root=${lib.escapeShellArg repoRoot}
+        docs_root="$repo_root/docs/wiki"
+        temp_dir="$(${pkgs.coreutils}/bin/mktemp -d)"
+
+        cleanup() {
+          ${pkgs.coreutils}/bin/rm -rf -- "$temp_dir"
+        }
+
+        trap cleanup EXIT
+
+        if [ -n "$(${pkgs.git}/bin/git -C "$repo_root" status --short)" ]; then
+          echo "Refusing to sync wiki from a dirty Git tree."
+          echo "Commit or discard changes first so the published wiki matches Git state."
+          exit 1
+        fi
+
+        if [ ! -d "$docs_root" ]; then
+          echo "Wiki source directory not found: $docs_root" >&2
+          exit 1
+        fi
+
+        main_rev="$(${pkgs.git}/bin/git -C "$repo_root" rev-parse --short HEAD)"
+
+        echo "==> Cloning wiki repository"
+        ${pkgs.git}/bin/git clone git@github.com:jaskejaske1/nixos-config.wiki.git "$temp_dir"
+
+        echo "==> Replacing wiki contents from docs/wiki"
+        ${pkgs.findutils}/bin/find "$temp_dir" -mindepth 1 -maxdepth 1 ! -name .git -exec ${pkgs.coreutils}/bin/rm -rf -- {} +
+        ${pkgs.coreutils}/bin/cp -R "$docs_root"/. "$temp_dir"/
+
+        if [ -z "$(${pkgs.git}/bin/git -C "$temp_dir" status --short)" ]; then
+          echo "Wiki is already up to date."
+          exit 0
+        fi
+
+        echo "==> Publishing wiki changes"
+        ${pkgs.git}/bin/git -C "$temp_dir" add .
+        ${pkgs.git}/bin/git -C "$temp_dir" commit -m "docs: sync wiki from $main_rev"
+        ${pkgs.git}/bin/git -C "$temp_dir" push origin HEAD
+      '')
+
       (pkgs.writeShellScriptBin "tacos-switch" ''
         set -euo pipefail
 

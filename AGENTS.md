@@ -77,6 +77,23 @@ This repository is managed under a narrow AI operating model.
 
 This repository follows a strict commit-before-build workflow.
 
+### `tacos-` Command Model
+
+The repository helper commands are intentionally atomic.
+
+- `tacos-fmt` formats tracked Nix files under the flake repository.
+- `tacos-eval` performs a read-only `nix eval` of the tacos system derivation.
+- `tacos-validate` is a compatibility shim that currently delegates to `tacos-eval`.
+- `tacos-stage` stages repository changes with `git add .` from the configured repo root.
+- `tacos-build` performs a non-activating `nix build --no-link` of the committed tacos system.
+- `tacos-switch` activates the committed tacos system after an explicit prompt.
+
+Do not assume these commands compose hidden steps for you.
+- `tacos-build` does not format, stage, or evaluate first.
+- `tacos-switch` does not format, stage, evaluate, or dry-build first.
+- `tacos-eval` does not modify files.
+- `tacos-fmt` does not stage or commit files.
+
 ### Commit Before Rebuild
 
 - Stage and commit configuration changes before running any system rebuild.
@@ -86,11 +103,14 @@ This repository follows a strict commit-before-build workflow.
 Required workflow:
 
 ```bash
-git add .
-git commit -m "describe the configuration change"
+tacos-fmt
+tacos-stage
+git -C ~/Projects/nixos-config commit -m "describe the configuration change"
+tacos-eval
+tacos-build
 ```
 
-Run rebuild commands only after the relevant changes are committed.
+Run `tacos-switch` only after the relevant changes are committed and, when practical, after `tacos-build` succeeds.
 
 ### Lockfile Handling
 
@@ -142,11 +162,11 @@ input-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
 
 Use the least invasive step that can still validate the change:
 
-1. Format the relevant Nix files with `nixfmt`.
-2. Run non-activating evaluation such as `nix eval` or other read-only checks.
-3. Commit the change set required for evaluation or rebuild.
-4. Run build-oriented validation before activation when practical.
-5. Activate the configuration only after explicit approval.
+1. Format with `tacos-fmt` or `nixfmt`.
+2. Stage and commit the change set required for flake evaluation.
+3. Run read-only evaluation with `tacos-eval`.
+4. Run build-oriented validation with `tacos-build` when practical.
+5. Activate with `tacos-switch` or `nixos-rebuild switch` only after explicit approval.
 
 ## Storage Maintenance Policy
 

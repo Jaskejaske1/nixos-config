@@ -30,16 +30,34 @@ in
 
   config = {
     environment.systemPackages = [
-      (pkgs.writeShellScriptBin "tacos-validate" ''
+      (pkgs.writeShellScriptBin "tacos-fmt" ''
         set -euo pipefail
 
         repo_root=${lib.escapeShellArg repoRoot}
 
-        echo "==> Evaluating tacos system derivation"
-        ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
+        echo "==> Formatting Nix files"
+        mapfile -t nix_files < <(
+          {
+            printf '%s\n' "$repo_root/flake.nix"
+            ${pkgs.findutils}/bin/find "$repo_root/hosts" "$repo_root/modules" -type f -name '*.nix'
+          } | ${pkgs.coreutils}/bin/sort
+        )
 
-        echo
-        echo "Validation completed without activating the system."
+        ${pkgs.nixfmt}/bin/nixfmt "''${nix_files[@]}"
+      '')
+
+      (pkgs.writeShellScriptBin "tacos-eval" ''
+        set -euo pipefail
+
+        echo "==> Evaluating tacos system derivation"
+        exec ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
+      '')
+
+      (pkgs.writeShellScriptBin "tacos-validate" ''
+        set -euo pipefail
+
+        echo "==> Evaluating tacos system derivation"
+        exec ${pkgs.nix}/bin/nix eval ${lib.escapeShellArg flakeDrvAttr}
       '')
 
       (pkgs.writeShellScriptBin "tacos-stage" ''
@@ -70,10 +88,7 @@ in
           exit 1
         fi
 
-        /run/current-system/sw/bin/tacos-validate
-
-        echo
-        printf 'Run sudo nixos-rebuild switch --flake .#tacos? [y/N] '
+        printf 'Run sudo nixos-rebuild switch --flake %s? [y/N] ' ${lib.escapeShellArg flakeRef}
         read -r reply
 
         case "$reply" in
@@ -98,9 +113,6 @@ in
           exit 1
         fi
 
-        /run/current-system/sw/bin/tacos-validate
-
-        echo
         echo "==> Building tacos system derivation"
         exec ${pkgs.nix}/bin/nix build --no-link ${lib.escapeShellArg flakeBuildAttr}
       '')

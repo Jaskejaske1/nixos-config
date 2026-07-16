@@ -240,7 +240,12 @@ in
       configDir = "${homeDir}/.config/syncthing";
       guiAddress = "127.0.0.1:8384";
       openDefaultPorts = false;
-      settings.options.localAnnounceEnabled = false;
+      settings.options = {
+        localAnnounceEnabled = false;
+        globalAnnounceEnabled = false;
+        relaysEnabled = false;
+        natEnabled = false;
+      };
     };
 
     services.logind.settings.Login.HandleLidSwitch = "suspend";

@@ -14,6 +14,7 @@
     ../../modules/profiles/net-lab.nix
     ../../modules/profiles/hardware.nix
     ../../modules/profiles/road-trip.nix
+    ../../modules/profiles/vpn-mullvad.nix
   ];
 
   system.configurationRevision =

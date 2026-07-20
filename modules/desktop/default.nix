@@ -7,6 +7,9 @@
 {
   imports = [ ./kde.nix ];
 
+  # Force Chromium and Electron apps (Discord, Obsidian) to run natively on Wayland
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   services.xserver.enable = true;
   services.xserver.desktopManager.xterm.enable = false;
 
@@ -45,5 +48,8 @@
     gsettings-desktop-schemas
     wl-clipboard
     codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+    # Chromium with DRM support enabled
+    (chromium.override { enableWideVine = true; })
   ];
 }

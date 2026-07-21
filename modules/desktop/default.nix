@@ -51,6 +51,8 @@
 
     # Chromium with DRM support enabled
     (chromium.override { enableWideVine = true; })
+
+    btop
   ];
 
   fonts.packages = with pkgs; [

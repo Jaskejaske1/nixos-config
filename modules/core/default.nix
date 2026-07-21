@@ -227,6 +227,7 @@ in
     };
 
     services.fstrim.enable = true;
+    services.fwupd.enable = true;
 
     services.journald.extraConfig = "SystemMaxUse=100M";
 

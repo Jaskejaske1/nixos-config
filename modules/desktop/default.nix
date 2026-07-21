@@ -52,4 +52,8 @@
     # Chromium with DRM support enabled
     (chromium.override { enableWideVine = true; })
   ];
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.fira-code
+  ];
 }

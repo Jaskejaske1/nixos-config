@@ -320,6 +320,11 @@ in
       '';
     };
 
+    programs.starship = {
+      enable = true;
+      # Starship automatically hooks into Bash, Zsh, etc. when enabled
+    };
+
     programs.nix-ld.enable = true;
     programs.nix-ld.libraries = with pkgs; [
       stdenv.cc.cc.lib

@@ -193,6 +193,34 @@ in
 
         exec ${pkgs.aria2}/bin/aria2c -x 16 -s 16 -j 16 "$@"
       '')
+
+      (pkgs.writeShellScriptBin "tacos-update" ''
+        set -euo pipefail
+
+        repo_root=${lib.escapeShellArg repoRoot}
+
+        if [ -n "$(${pkgs.git}/bin/git -C "$repo_root" status --short)" ]; then
+          echo "Refusing to update from a dirty Git tree."
+          echo "Commit or discard changes first so we don't mix updates with your work."
+          exit 1
+        fi
+
+        echo "==> Updating NixOS flake inputs..."
+        ${pkgs.nix}/bin/nix flake update --flake "$repo_root"
+
+        if ! ${pkgs.git}/bin/git -C "$repo_root" diff --quiet flake.lock; then
+          echo "==> Staging updated flake.lock"
+          ${pkgs.git}/bin/git -C "$repo_root" add flake.lock
+          echo
+          echo "Lockfile updated and staged! To apply the update, run:"
+          echo "  git -C $repo_root commit -m \"chore: update flake inputs\""
+          echo "  tacos-eval"
+          echo "  tacos-build"
+          echo "  tacos-switch"
+        else
+          echo "==> Flake inputs are already up to date."
+        fi
+      '')
     ];
 
     boot.loader.systemd-boot.enable = true;
@@ -228,6 +256,8 @@ in
 
     services.fstrim.enable = true;
     services.fwupd.enable = true;
+    # Enable ZRAM swap for massive performance improvements under heavy RAM load
+    zramSwap.enable = true;
 
     services.journald.extraConfig = "SystemMaxUse=100M";
 

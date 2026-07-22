@@ -379,6 +379,14 @@ in
       '';
     };
 
+    # Run the SSH agent and automatically store passphrases on first use
+    programs.ssh = {
+      startAgent = true;
+      extraConfig = ''
+        AddKeysToAgent yes
+      '';
+    };
+
     programs.starship = {
       enable = true;
       # Starship automatically hooks into Bash, Zsh, etc. when enabled

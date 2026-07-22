@@ -221,9 +221,37 @@ in
           echo "==> Flake inputs are already up to date."
         fi
       '')
+
+      (pkgs.writeShellScriptBin "tacos-cleanup" ''
+        set -euo pipefail
+
+        echo "WARNING: This is a destructive operation."
+        echo "It will delete ALL historical system generations except the current active one."
+        echo "Only proceed if your current system state is tested and stable."
+        echo
+        printf 'Run destructive garbage collection? [y/N] '
+        read -r reply
+
+        case "$reply" in
+          [yY]|[yY][eE][sS]) ;;
+          *)
+            echo "Aborted."
+            exit 0
+            ;;
+        esac
+
+        echo "==> Deleting old system generations..."
+        sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +1
+
+        echo "==> Collecting garbage from the Nix store..."
+        sudo nix-store --gc
+
+        echo "==> Cleanup complete!"
+      '')
     ];
 
     boot.loader.systemd-boot.enable = true;
+    boot.loader.systemd-boot.configurationLimit = 10;
     boot.loader.efi.canTouchEfiVariables = true;
     boot.kernelParams = [
       "quiet"

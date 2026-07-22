@@ -27,20 +27,24 @@ That means:
 - a valid Git commit is part of the system identity
 - rollback and auditability depend on committed history
 
-## Standard Change Flow
+## Fast-Path (Daily Driver)
+
+For standard additions (new packages, simple config tweaks), you can safely chain the commands. `tacos-switch` is inherently atomic and will safely abort without mutating the system if evaluation or building fails.
 
 ```bash
-tacos-status
-tacos-fmt
-tacos-stage
-git -C ~/Projects/nixos-config commit -m "describe the configuration change"
-tacos-eval
-tacos-build
+tacos-fmt && tacos-stage && git -C ~/Projects/nixos-config commit -m "describe the configuration change" && tacos-switch
 ```
 
-If both validation steps pass, the owner can approve:
+## Complex Logic Flow
+
+When writing custom derivations, doing large refactors, or experimenting, use the explicit validation steps to catch syntax and build errors early before ever attempting to switch:
 
 ```bash
+tacos-fmt
+tacos-stage
+git -C ~/Projects/nixos-config commit -m "describe the complex change"
+tacos-eval
+tacos-build
 tacos-switch
 ```
 

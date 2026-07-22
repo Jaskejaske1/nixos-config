@@ -190,13 +190,19 @@ input-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
 
 ### Validation Ladder
 
-Use the least invasive step that can still validate the change:
+**For standard, low-risk changes (e.g., adding packages, simple config toggles):**
+Use the fast-path chain. `tacos-switch` is inherently atomic and will abort safely if evaluation or building fails.
+```bash
+tacos-fmt && tacos-stage && git -C ~/Projects/nixos-config commit -m "describe the change" && tacos-switch
+```
 
-1. Format with `tacos-fmt` or `nixfmt`.
-2. Stage and commit the change set required for flake evaluation.
-3. Run read-only evaluation with `tacos-eval`.
-4. Run build-oriented validation with `tacos-build` when practical.
-5. Activate with `tacos-switch` or `nixos-rebuild switch` only after explicit approval.
+**For complex logic, large refactors, or custom derivations:**
+Use the explicit validation ladder to catch errors early without risking a switch prompt:
+1. Format: `tacos-fmt`
+2. Stage & Commit: `tacos-stage` and `git commit`
+3. Evaluate: `tacos-eval` (checks syntax/types)
+4. Dry-Build: `tacos-build` (compiles to store)
+5. Activate: `tacos-switch` (only after explicit approval)
 
 ## Storage Maintenance Policy
 

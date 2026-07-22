@@ -78,8 +78,12 @@ This keeps discovery available on the same LAN while preventing public discovery
 
 ## Standard Workflow
 
-Use the committed-state validation ladder:
+For standard, low-risk changes, use the fast-path chain:
+```bash
+tacos-fmt && tacos-stage && git -C ~/Projects/nixos-config commit -m "describe the configuration change" && tacos-switch
+```
 
+If you are writing complex logic or need to dry-run a build, use the explicit validation ladder:
 ```bash
 tacos-status
 tacos-fmt
@@ -87,16 +91,10 @@ tacos-stage
 git -C ~/Projects/nixos-config commit -m "describe the configuration change"
 tacos-eval
 tacos-build
+tacos-switch
 ```
 
-Only run `tacos-switch` after:
-
-- the relevant changes are committed
-- `tacos-eval` succeeds
-- `tacos-build` succeeds when practical
-- live activation is explicitly approved
-
-If `docs/wiki/` changed, run `tacos-wiki` after the successful switch so the GitHub wiki matches the activated repository state.
+If `docs/wiki/` changed, run `tacos-wiki` after a successful switch so the GitHub wiki matches the activated repository state.
 
 ## Guardrails
 

@@ -17,6 +17,10 @@ Use these categories exactly when documenting or automating behavior:
 - `repo-writing`: mutates tracked files or the Git index
 - `store-writing`: may fetch or realise Nix store paths without activating the system
 - `system-activating`: changes the live system state
+- `remote-writing`: mutates a remote repository (like GitHub wiki)
+- `store-writing`: may fetch or realise Nix store paths without activating the system
+- `system-activating`: changes the live system state
+- `destructive-maintenance`: removes historical state and reclaims disk space
 
 ## Command Matrix
 
@@ -31,6 +35,7 @@ Use these categories exactly when documenting or automating behavior:
 | `tacos-wiki` | Publishes committed `docs/wiki/` content to GitHub wiki repo | No | No | No | `remote-writing` |
 | `tacos-build` | Runs `nix build --no-link` against the committed system | No | No | Yes, explicitly | `store-writing` |
 | `tacos-switch` | Prompts, then runs `sudo nixos-rebuild switch` against the committed system | No | No | No | `system-activating` |
+| `tacos-cleanup`| Prompts, then purges all historical system generations | No | No | No | `destructive-maintenance` |
 
 ## Important Distinctions
 

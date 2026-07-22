@@ -62,16 +62,17 @@ tacos-build
 
 ## Cleanup And Old Generations
 
-Cleanup is intentionally separate from the helper pipeline.
+Cleanup is intentionally destructive and should only be run when the current
+system state is known-good and the active configuration revision is trusted.
 
-Only run it when the current system state is known-good and the active configuration revision is trusted.
-
-Recommended purge sequence:
+To purge old generations and reclaim disk space, run the atomic helper:
 
 ```bash
-sudo nix-env --profile /nix/var/nix/profiles/system --delete-generations +1
-sudo nix-store --gc
+tacos-cleanup
 ```
+
+The system will automatically keep the most recent 10 generations
+in the boot menu as a fallback.
 
 Notes:
 
@@ -83,5 +84,6 @@ Notes:
 
 - `tacos-build` can download or realise store paths
 - `tacos-switch` can restart services and re-activate units
+- `tacos-cleanup` will permanently delete all unreferenced system history
 - `tacos-fmt` and `tacos-stage` write to the repository
 - only `tacos-status`, `tacos-eval`, and `tacos-validate` are read-only

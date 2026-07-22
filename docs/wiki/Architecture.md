@@ -37,7 +37,8 @@ Shared base behavior:
 - NetworkManager and firewall baseline
 - Snapper and Btrfs maintenance
 - Syncthing configuration with local LAN discovery enabled while public discovery, relays, and NAT traversal stay disabled
-- helper scripts such as `tacos-status`, `tacos-fmt`, `tacos-eval`, `tacos-build`, and `tacos-switch`
+- `zramSwap` and `fwupd` firmware management
+- helper scripts such as `tacos-status`, `tacos-fmt`, `tacos-eval`, `tacos-build`, `tacos-switch`, `tacos-update`, and `tacos-wiki`
 
 ### `modules/desktop/`
 
@@ -47,7 +48,7 @@ Graphical workstation layer:
 - SDDM Wayland session
 - Belgian keyboard layout
 - PipeWire audio stack
-- desktop-facing packages such as Firefox, Discord, Zed, and Codex CLI
+- desktop-facing packages such as Firefox, Chromium, Discord, Zed, btop, and Codex CLI
 
 ### `modules/profiles/`
 
@@ -55,9 +56,11 @@ Capability modules:
 
 - `dev-web.nix`: Node 24, fnm, PHP 8.3, Composer, PowerShell, Obsidian, terminal tools
 - `dev-cpp.nix`: GCC 13, CMake, Ninja, SDL3, Wayland, X11, XCB, GL, PipeWire dev packages
+- `dev-direnv.nix`: Direnv and nix-direnv enablement for project-scoped shell environments
 - `net-lab.nix`: Wireshark enablement and group access
 - `hardware.nix`: `picocom` and `dialout` access
 - `road-trip.nix`: TLP battery profile, Intel media driver, and `mpv` defaults
+- `vpn-mullvad.nix`: Mullvad VPN daemon and GUI autostart
 
 ## Repository Intent
 

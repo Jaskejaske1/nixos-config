@@ -27,6 +27,8 @@ Use these categories exactly when documenting or automating behavior:
 | `tacos-eval` | Runs read-only `nix eval` for the tacos system derivation | No | No | No | `read-only` |
 | `tacos-validate` | Deprecated alias for `tacos-eval` | No | No | No | `read-only` |
 | `tacos-stage` | Stages repository changes with `git add .` | No | Yes, explicitly | No | `repo-writing` |
+| `tacos-update` | Updates flake inputs and stages `flake.lock` | No | Yes, explicitly | No | `repo-writing` |
+| `tacos-wiki` | Publishes committed `docs/wiki/` content to GitHub wiki repo | No | No | No | `remote-writing` |
 | `tacos-build` | Runs `nix build --no-link` against the committed system | No | No | Yes, explicitly | `store-writing` |
 | `tacos-switch` | Prompts, then runs `sudo nixos-rebuild switch` against the committed system | No | No | No | `system-activating` |
 

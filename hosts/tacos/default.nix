@@ -10,7 +10,6 @@
     ../../modules/core
     ../../modules/desktop
     ../../modules/profiles/dev-web.nix
-    ../../modules/profiles/dev-cpp.nix
     ../../modules/profiles/net-lab.nix
     ../../modules/profiles/hardware.nix
     ../../modules/profiles/road-trip.nix
